@@ -1,11 +1,50 @@
 import { GraphQLServer } from 'graphql-yoga'
 
+// Scalar types - String, Boolean, Int, Float, ID
+
+// Demo user data
+const users = [{
+    id: '1',
+    name: 'Anh',
+    email: 'anh@exmaple.com',
+    age: 24
+}, {
+    id: 2,
+    name: 'Kate',
+    email: 'kate@example.com'
+}, {
+    id: 3,
+    name: 'Kim',
+    email: 'kim@example'
+}
+]
+
+const posts = [{
+    id: '01',
+    title: 'Reboot Server',
+    body: 'Before rebooting the server..',
+    published: true
+}, {
+    id: '02',
+    title: 'Shutting Down Server',
+    body: 'Before shutting down server..',
+    published: true
+}, {
+    id: '03',
+    title: 'Starting Server',
+    body: 'After starting up the server..',
+    published: false
+}
+]
+
 // Type definitions (schema)
 const typeDefs = `
     type Query {
         greeting(name: String, position: String): String!
         add(numbers: [Float!]!): Float!
         grades: [Int!]!
+        users(query: String): [User!]!
+        posts(query: String): [Post!]!
         me: User!
         post: Post!
     }
@@ -46,6 +85,24 @@ const resolvers = {
         },
         grades(parent, args, ctx, info) {
             return [99, 80, 93]
+        },
+        users(parent, args, ctx, info) {
+            if (!args.query) {
+                return users
+            }
+            return users.filter((user) => {
+                return user.name.toLowerCase().includes(args.query.toLowerCase())
+            })
+        },
+        posts(parent, args, ctx, info) {
+            if (!args.query) {
+                return posts
+            }
+            return posts.filter((posts) => {
+                const isTitleMatch = posts.title.toLowerCase().includes(args.query.toLowerCase())
+                const isBodyMatch = posts.body.toLowerCase().includes(args.query.toLowerCase())
+                return isTitleMatch || isBodyMatch
+            })
         },
         me() {
             return {
