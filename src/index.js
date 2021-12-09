@@ -9,11 +9,11 @@ const users = [{
     email: 'anh@exmaple.com',
     age: 24
 }, {
-    id: 2,
+    id: '2',
     name: 'Kate',
     email: 'kate@example.com'
 }, {
-    id: 3,
+    id: '3',
     name: 'Kim',
     email: 'kim@example'
 }
@@ -23,17 +23,20 @@ const posts = [{
     id: '01',
     title: 'Reboot Server',
     body: 'Before rebooting the server..',
-    published: true
+    published: true,
+    author: '1'
 }, {
     id: '02',
     title: 'Shutting Down Server',
     body: 'Before shutting down server..',
-    published: true
+    published: true,
+    author: '1'
 }, {
     id: '03',
     title: 'Starting Server',
     body: 'After starting up the server..',
-    published: false
+    published: false,
+    author: '3'
 }
 ]
 
@@ -61,6 +64,7 @@ const typeDefs = `
         title: String!
         body: String!
         published: Boolean!
+        author: User!
     }
 `
 
@@ -118,6 +122,13 @@ const resolvers = {
                 body: 'Before restarting your server, please make sure..',
                 published: true
             }
+        }
+    },
+    Post: {
+        author(parent, args, ctx, info) {
+            return users.find((user) => {
+                return user.id === parent.author
+            })
         }
     }
 
