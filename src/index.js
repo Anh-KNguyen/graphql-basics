@@ -57,6 +57,7 @@ const typeDefs = `
         name: String!
         email: String!
         age: Int
+        posts: [Post!]!
     }
 
     type Post {
@@ -66,6 +67,7 @@ const typeDefs = `
         published: Boolean!
         author: User!
     }
+
 `
 
 // Resolvers
@@ -130,7 +132,15 @@ const resolvers = {
                 return user.id === parent.author
             })
         }
+    },
+    User: {
+        posts(parent, args, ctx, info) {
+            return posts.filter((post) => {
+                return post.author === parent.id
+            })
+        }
     }
+
 
 }
 
